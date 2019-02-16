@@ -1,0 +1,12 @@
+{
+  "name": "league_table_generator",
+  "version": "1.0.0",
+  "description": "Creates a JSON of Premier League teams sorted by points, then goal diff, then goals scored from a provided JSON data set of a season's matches. ",
+  "main": "src/main.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jonathan Owen",
+  "license": "MIT"
+}
