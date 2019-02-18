@@ -5,6 +5,7 @@
  * Task: Given the full list of matches for the Premier league 2016/17 Season 
  * (https://github.com/openfootball/football.json/blob/master/2016-17/en.1.json), 
  * create a script to generate the full league table (as JSON).
+ * EntryPoint: generateLeagueTable(inputData: InputData)
  */
 
 interface Team {
@@ -92,8 +93,27 @@ class TeamData {
         (this.wins * this.ptsWin) + (this.draws * this.ptsDraw);
 }
 
+/**
+ * Generic JSON creator for tables
+ * @param data data set to be displayed in table
+ * @param dataSetTitle optional title for table/JSON data
+ */
+const createJSON = (data: any[], dataSetTitle?: string): string => {
+    const jsonOutput: OutputData = {
+        name: (dataSetTitle != undefined) ? dataSetTitle : "",
+        table: data
+    }
+
+    return JSON.stringify(jsonOutput);
+}
+
+/**
+ * Rules to determine if team is in the correct position of Ranking table
+ * Sort by points, then goalDiff, then goalsScored
+ * @param team1 team data being bubbled up
+ * @param team2 team data to be tested against
+ */
 const rankingRules = (team1: RankingRow, team2: RankingRow): boolean => {
-    // Sort by points, then goalDiff, then goalsScored
     let test: boolean = team1.points > team2.points;
     const pointsDraw: boolean = team1.points === team2.points;
     test = (pointsDraw && team1.goalDiff > team2.goalDiff) ? true : test;
@@ -103,6 +123,10 @@ const rankingRules = (team1: RankingRow, team2: RankingRow): boolean => {
     return test;
 }
 
+/**
+ * Parse data from input JSON 
+ * @param rounds Array of match days containing arrays of matches
+ */
 function createTeamMap(rounds: Round[]): TeamMap {
     let map: TeamMap = {};
 
@@ -110,8 +134,8 @@ function createTeamMap(rounds: Round[]): TeamMap {
         let matches = round.matches;
 
         for (let match of matches) {
-            const key1: string = match.team1.code;
-            const key2: string = match.team2.code; 
+            const key1: string = match.team1.key;
+            const key2: string = match.team2.key; 
 
             if (map[key1] === undefined) {
                 map[key1] = new TeamData(match.team1.name);
@@ -127,6 +151,10 @@ function createTeamMap(rounds: Round[]): TeamMap {
     return map;
 }
 
+/**
+ * Sort team data by Rank requirements
+ * @param teams List of data for the output table of all teams (unsorted)
+ */
 function sortByRank(teams: TeamMap): RankingRow[] {
     const sorted: RankingRow[] = [];
     let rank = 0;
@@ -157,15 +185,6 @@ function sortByRank(teams: TeamMap): RankingRow[] {
     }
 
     return sorted;
-}
-
-function createJSON(data: any[], dataSetTitle?: string): string {
-    const jsonOutput: OutputData = {
-        name: (dataSetTitle != undefined) ? dataSetTitle : "",
-        table: data
-    }
-
-    return JSON.stringify(jsonOutput);
 }
 
 export function generateLeagueTable(inputData: InputData) {
