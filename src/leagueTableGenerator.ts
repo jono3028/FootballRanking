@@ -108,17 +108,29 @@ const createJSON = (data: any[], dataSetTitle?: string): string => {
 }
 
 /**
- * Rules to determine if team is in the correct position of Ranking table
+ * Ranking Rules to determine if team is in the correct position of Ranking table
  * Sort by points, then goalDiff, then goalsScored
  * @param team1 team data being bubbled up
  * @param team2 team data to be tested against
  */
-const rankingRules = (team1: RankingRow, team2: RankingRow): boolean => {
-    let test: boolean = team1.points > team2.points;
-    const pointsDraw: boolean = team1.points === team2.points;
-    test = (pointsDraw && team1.goalDiff > team2.goalDiff) ? true : test;
-    const goalDiffDraw: boolean = team1.goalDiff === team2.goalDiff;
-    test = (pointsDraw && goalDiffDraw && team1.goalsFor > team2.goalsFor) ? true : test;
+const rankingRule3 = (team1: RankingRow, team2: RankingRow): boolean => team1.goalsFor > team2.goalsFor;
+const rankingRule2 = (team1: RankingRow, team2: RankingRow): boolean => {
+    let test = false;
+    if (team1.goalDiff > team2.goalDiff) {
+        test = true;
+    } else if (team1.goalDiff === team2.goalDiff) {
+        test = rankingRule3(team1, team2);
+    }
+
+    return test;
+}
+const rankingRule1 = (team1: RankingRow, team2: RankingRow): boolean => {
+    let test = false;
+    if (team1.points > team2.points) {
+        test = true;
+    } else if (team1.points === team2.points) {
+        test = rankingRule2(team1, team2)
+    }
 
     return test;
 }
@@ -174,7 +186,7 @@ function sortByRank(teams: TeamMap): RankingRow[] {
         })
         let idx: number = sorted.length;
         // Using bubble sort due to the small data set
-        while (--idx > 0 && rankingRules(sorted[idx], sorted[idx - 1])) {
+        while (--idx > 0 && rankingRule1(sorted[idx], sorted[idx - 1])) {
             const temp: RankingRow = sorted[idx];
             sorted[idx] = sorted[idx - 1];
             sorted[idx - 1] = temp;
