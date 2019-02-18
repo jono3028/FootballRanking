@@ -22,15 +22,13 @@ Complete list of Premier League 2016/2017 matches available at https://github.co
 # Thinking
 Task will be completed in multiple steps
 1) Parse given data and create a map (key = teamName) storing:
-	- [ ] games played
-	- [ ] wins 
-	- [ ] draws
-	- [ ] goals for
-	- [ ] goals against
-2) Create a hash table storing key from above map:
-	- [ ] indexed by points
-	- [ ] create binary tree sorted by goal diff & goals scored
-3) Creat output JSON from hash table and map
+	- [x] games played
+	- [x] wins 
+	- [x] draws
+	- [x] goals for
+	- [x] goals against
+2) Create an array of obj sorted by ranking from map above
+3) Creat output JSON from sorted array
 
 # Result verification
 A completed table may be found here:  
